@@ -68,6 +68,20 @@ class ConfigTests(unittest.TestCase):
         settings = self.load(PROXYAPI_KEY="sk-ВАШ_КЛЮЧ_PROXYAPI")
         self.assertEqual(settings.api_key, "")
 
+    def test_empty_models_use_preset(self):
+        settings = self.load(LLM_PROVIDER="anthropic", ANTHROPIC_API_KEY="sk-ant")
+        self.assertEqual(settings.normal_model, "claude-haiku-4-5")
+        self.assertEqual(settings.thinking_model, "claude-sonnet-4-5")
+
+    def test_explicit_model_overrides_preset(self):
+        settings = self.load(
+            LLM_PROVIDER="anthropic",
+            ANTHROPIC_API_KEY="sk-ant",
+            THINKING_MODEL="claude-custom",
+        )
+        self.assertEqual(settings.thinking_model, "claude-custom")
+        self.assertEqual(settings.normal_model, "claude-haiku-4-5")
+
     def test_provider_alias(self):
         self.assertEqual(self.load(LLM_PROVIDER="proxy").provider, "proxyapi")
 
