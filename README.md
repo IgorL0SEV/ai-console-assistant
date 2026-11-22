@@ -253,6 +253,7 @@ ai-console-assistant/
 
 ## Справка
 
+- [Сценарий проверки для сдачи](TEST_SCENARIO.md)
 - [ProxyAPI: адреса, модели, reasoning и ошибки](reference/proxyapi-reference.md)
 - [Конспект по AI API](CONSPECT.md)
 - [План проекта](PLAN.md)
