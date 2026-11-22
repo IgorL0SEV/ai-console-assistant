@@ -168,7 +168,7 @@ SDK настраивается через `REQUEST_TIMEOUT` и `MAX_RETRIES`. И
 | Ошибка не портит историю | ✅ тест `test_error_does_not_change_history` |
 | Reasoning Claude | ✅ тест `test_thinking_parameter` |
 | `.env` не попал в git | ✅ проверено `git ls-files` |
-| Ветки-пресеты | ⏳ будут созданы после публикации |
+| Ветки-пресеты | ✅ созданы локально: 4 ветки с профилями |
 | Живой ProxyAPI | ⏳ нужен ключ и баланс |
 
 ## Как воспроизвести
