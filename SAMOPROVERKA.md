@@ -159,7 +159,7 @@ SDK настраивается через `REQUEST_TIMEOUT` и `MAX_RETRIES`. И
 
 | Проверка | Результат |
 |---|---|
-| `python -m unittest discover -s tests -v` | ✅ 77 тестов, `OK` |
+| `python -m unittest discover -s tests -v` | ✅ 79 тестов, `OK` |
 | `python assistant.py --demo` | ✅ панели, reasoning, история |
 | `python assistant.py --check` без ключа | ✅ понятная ошибка, не трейсбек |
 | `python assistant.py --help` | ✅ все флаги и режимы |

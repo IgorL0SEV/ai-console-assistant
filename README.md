@@ -173,7 +173,7 @@ ai-console-assistant/
 ├── ui.py             # вывод через rich
 ├── demo.py           # офлайн-демонстрация
 ├── run.cmd           # запуск в один клик
-├── tests/            # 77 тестов без сети
+├── tests/            # 79 тестов без сети
 ├── reference/        # справка по ProxyAPI
 ├── requirements.txt
 ├── .env.example
