@@ -5,9 +5,10 @@
 с несколькими LLM-клиентами, а в репозитории есть ветки-пресеты под каждого
 провайдера.
 
-- Основной вариант (сдача): **ProxyAPI**, обычная модель + Claude с reasoning.
+- Основной вариант: **ProxyAPI**, обычная модель + Claude с reasoning.
 - Дополнительно: прямые ветки **Anthropic**, **OpenAI** и **OpenRouter**.
 - Python 3.10+ (проверено на 3.12).
+- Репозиторий: <https://github.com/IgorL0SEV/ai-console-assistant>
 
 ## Ветки-пресеты
 

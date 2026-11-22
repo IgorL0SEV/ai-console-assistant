@@ -25,7 +25,7 @@
 | 13 | 80 тестов без сети: конфиг, история, адаптеры, ошибки, команды | ✅ |
 | 14 | Документы: `README`, `CONSPECT`, `PLAN`, `SAMOPROVERKA`, `reference/` | ✅ |
 | 15 | Ветки-пресеты `proxyapi`, `anthropic`, `openai`, `openrouter` | ✅ созданы локально |
-| 16 | Публикация репозитория `ai-console-assistant` | ⏳ |
+| 16 | Публикация репозитория `ai-console-assistant` | ✅ [репозиторий](https://github.com/IgorL0SEV/ai-console-assistant) |
 | 17 | Живая проверка ProxyAPI (ключ пользователя, баланс) | ✅ |
 
 ## Предусловия
