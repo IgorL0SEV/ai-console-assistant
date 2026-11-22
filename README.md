@@ -176,6 +176,7 @@ ai-console-assistant/
 ├── errors.py         # понятные ошибки SDK
 ├── ui.py             # вывод через rich
 ├── demo.py           # офлайн-демонстрация
+├── TEST_SCENARIO.md  # сценарий живой проверки для сдачи
 ├── run.cmd           # запуск в один клик
 ├── tests/            # 80 тестов без сети
 ├── reference/        # справка по ProxyAPI
@@ -251,6 +252,7 @@ ai-console-assistant/
 
 ## Справка
 
+- [Сценарий проверки для сдачи](TEST_SCENARIO.md)
 - [ProxyAPI: адреса, модели, reasoning и ошибки](reference/proxyapi-reference.md)
 - [Конспект по AI API](CONSPECT.md)
 - [План проекта](PLAN.md)
