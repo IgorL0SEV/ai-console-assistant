@@ -11,7 +11,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 ROOT = Path(__file__).resolve().parent
 MODES = ("normal", "thinking")
@@ -161,27 +161,37 @@ def load_settings(
     *,
     provider_override: str | None = None,
 ) -> Settings:
-    """Читает .env и переменные окружения. Ключ проверяется отдельно."""
-    env_path = Path(env_file) if env_file else ROOT / ".env"
-    load_dotenv(env_path, override=False)
+    """Читает .env и переменные окружения. Ключ проверяется отдельно.
 
-    provider = _normalize_provider(os.getenv("LLM_PROVIDER"), provider_override)
+    Значения из файла .env имеют приоритет над окружением. Адреса API
+    берутся только из .env или пресета: в окружении могут быть чужие
+    переменные вроде ANTHROPIC_BASE_URL от других инструментов.
+    """
+    env_path = Path(env_file) if env_file else ROOT / ".env"
+    file_values = dotenv_values(env_path) if env_path.exists() else {}
+
+    def value(name: str) -> str | None:
+        if name in file_values:
+            return file_values.get(name)
+        return os.getenv(name)
+
+    provider = _normalize_provider(value("LLM_PROVIDER"), provider_override)
     preset = PRESETS[provider]
 
-    key = _mask_placeholder(_read_str(os.getenv(preset.key_env)))
-    normal_model = _read_str(os.getenv("NORMAL_MODEL")) or preset.normal_model
-    thinking_model = _read_str(os.getenv("THINKING_MODEL")) or preset.thinking_model
+    key = _mask_placeholder(_read_str(value(preset.key_env)))
+    normal_model = _read_str(value("NORMAL_MODEL")) or preset.normal_model
+    thinking_model = _read_str(value("THINKING_MODEL")) or preset.thinking_model
 
-    default_mode = _read_str(os.getenv("DEFAULT_MODE")).lower() or "thinking"
+    default_mode = _read_str(value("DEFAULT_MODE")).lower() or "thinking"
     if default_mode not in MODES:
         raise ConfigError(f"DEFAULT_MODE должен быть normal или thinking, получено: {default_mode!r}")
 
     reasoning_budget = _read_int(
-        os.getenv("REASONING_BUDGET"), 1500, name="REASONING_BUDGET", minimum=1024
+        value("REASONING_BUDGET"), 1500, name="REASONING_BUDGET", minimum=1024
     )
-    max_tokens = _read_int(os.getenv("MAX_TOKENS"), 4096, name="MAX_TOKENS", minimum=256)
+    max_tokens = _read_int(value("MAX_TOKENS"), 4096, name="MAX_TOKENS", minimum=256)
     normal_max_tokens = _read_int(
-        os.getenv("NORMAL_MAX_TOKENS"), 2048, name="NORMAL_MAX_TOKENS", minimum=1
+        value("NORMAL_MAX_TOKENS"), 2048, name="NORMAL_MAX_TOKENS", minimum=1
     )
     if provider in {"proxyapi", "anthropic"} and max_tokens <= reasoning_budget:
         raise ConfigError(
@@ -189,21 +199,22 @@ def load_settings(
             f"сейчас {max_tokens} <= {reasoning_budget}"
         )
 
-    effort = _read_str(os.getenv("NORMAL_REASONING_EFFORT")).lower() or "medium"
+    effort = _read_str(value("NORMAL_REASONING_EFFORT")).lower() or "medium"
     if effort not in EFFORT_LEVELS:
         raise ConfigError(
             f"NORMAL_REASONING_EFFORT должен быть одним из {', '.join(EFFORT_LEVELS)}"
         )
 
-    history_file = Path(os.getenv("HISTORY_FILE") or "data/history.json")
+    history_file = Path(value("HISTORY_FILE") or "data/history.json")
     if not history_file.is_absolute():
         history_file = ROOT / history_file
-    log_file = Path(os.getenv("LOG_FILE") or "data/assistant.log")
+    log_file = Path(value("LOG_FILE") or "data/assistant.log")
     if not log_file.is_absolute():
         log_file = ROOT / log_file
 
-    openai_base_url = _read_str(os.getenv("OPENAI_BASE_URL")) or preset.openai_base_url
-    anthropic_base_url = _read_str(os.getenv("ANTHROPIC_BASE_URL")) or preset.anthropic_base_url
+    # Только .env или пресет: в окружении могут быть чужие ANTHROPIC_BASE_URL.
+    openai_base_url = _read_str(file_values.get("OPENAI_BASE_URL")) or preset.openai_base_url
+    anthropic_base_url = _read_str(file_values.get("ANTHROPIC_BASE_URL")) or preset.anthropic_base_url
 
     return Settings(
         provider=provider,
@@ -218,12 +229,12 @@ def load_settings(
         max_tokens=max_tokens,
         normal_max_tokens=normal_max_tokens,
         normal_reasoning_effort=effort,
-        system_prompt=_read_str(os.getenv("SYSTEM_PROMPT"))
+        system_prompt=_read_str(value("SYSTEM_PROMPT"))
         or "Вы полезный ассистент. Отвечайте на русском языке.",
-        timeout=_read_float(os.getenv("REQUEST_TIMEOUT"), 90.0, name="REQUEST_TIMEOUT"),
-        max_retries=_read_int(os.getenv("MAX_RETRIES"), 1, name="MAX_RETRIES", minimum=0),
+        timeout=_read_float(value("REQUEST_TIMEOUT"), 90.0, name="REQUEST_TIMEOUT"),
+        max_retries=_read_int(value("MAX_RETRIES"), 1, name="MAX_RETRIES", minimum=0),
         max_history_messages=_read_int(
-            os.getenv("MAX_HISTORY_MESSAGES"), 40, name="MAX_HISTORY_MESSAGES", minimum=2
+            value("MAX_HISTORY_MESSAGES"), 40, name="MAX_HISTORY_MESSAGES", minimum=2
         ),
         history_file=history_file,
         log_file=log_file,

@@ -82,6 +82,14 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(settings.thinking_model, "claude-custom")
         self.assertEqual(settings.normal_model, "claude-haiku-4-5")
 
+    def test_ambient_base_url_is_ignored(self):
+        with patch.dict(
+            os.environ, {"ANTHROPIC_BASE_URL": "http://127.0.0.1:11434"}, clear=True
+        ):
+            settings = load_settings(env_file=self.env_file)
+        self.assertEqual(settings.anthropic_base_url, "https://api.proxyapi.ru")
+        self.assertEqual(settings.openai_base_url, "https://api.proxyapi.ru/v1")
+
     def test_provider_alias(self):
         self.assertEqual(self.load(LLM_PROVIDER="proxy").provider, "proxyapi")
 
